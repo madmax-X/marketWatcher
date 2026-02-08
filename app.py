@@ -131,3 +131,35 @@ with t5:
     st.write("- **Power Grid:** Thermal limits reached in major data center hubs.")
 
 st.info("Market Observation: Narrative control is highest in the Energy and Labor sectors. The 'Real World' (Copper/Grid) remains decoupled from the 'Digital Narrative'.")
+
+# --- NEW: KINETIC SIGNAL & MILITARY TICKER ---
+st.header("🪖 Kinetic Signals & Military Movements")
+
+# Military Movement Data for Feb 2026
+mil_data = pd.DataFrame({
+    "Region": ["Europe (NATO)", "South China Sea", "Middle East", "Latin America"],
+    "Movement": ["Steadfast Dart 2026", "Combat Readiness Patrols", "USS Abraham Lincoln Carrier", "US Hard Power Shift"],
+    "Global Signal": ["Non-US NATO Autonomy", "Blockade-Like Formations", "Regional War Warning", "Campaign in Caribbean"],
+    "Threat Level": ["Elevated", "Critical", "Emergency", "Steady"]
+})
+
+def style_threat(val):
+    color_map = {
+        "Emergency": "background-color: #dc3545; color: white;",
+        "Critical": "background-color: #fd7e14; color: white;",
+        "Elevated": "background-color: #ffc107; color: black;",
+        "Steady": "background-color: #28a745; color: white;"
+    }
+    return color_map.get(val, "")
+
+st.dataframe(mil_data.style.map(style_threat, subset=['Threat Level']), use_container_width=True, hide_index=True)
+
+# --- INTELLIGENCE DEEP DIVE: KINETIC vs NARRATIVE ---
+with st.expander("👁️ Kinetic Truth Deep Dive"):
+    st.write("### 🇪🇺 The NATO Rupture")
+    st.write("- **Narrative:** 'Stronger together.'")
+    st.write("- **Kinetic Reality:** The launch of **Steadfast Dart** without US troops (Feb 2026) is a historic fracture in the 77-year alliance.")
+    
+    st.write("### 🇨🇳 The 'Shadow' Blockade")
+    st.write("- **Narrative:** 'Standard naval patrols.'")
+    st.write("- **Kinetic Reality:** Use of **2,000+ fishing boats** (Chinese Maritime Militia) to form blockade-like formations around Taiwan.")
