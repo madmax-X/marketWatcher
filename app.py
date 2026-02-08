@@ -6,7 +6,7 @@ from streamlit_autorefresh import st_autorefresh
 from datetime import datetime, timedelta
 
 # --- 1. PAGE CONFIG & AUTO-REFRESH ---
-st.set_set_page_config(page_title="2026 Truth Oracle", layout="wide")
+st.set_page_config(page_title="2026 Truth Oracle", layout="wide")
 st_autorefresh(interval=60 * 1000, key="datarefresh")
 
 # --- 2. LIVE DATA FETCHING ---
