@@ -10,7 +10,7 @@ st.set_page_config(page_title="2026 Market Watcher", layout="wide")
 # Refresh every 60 seconds
 st_autorefresh(interval=60 * 1000, key="datarefresh")
 
-# --- 2. LIVE DATA FETCHING & CORRELATION LOGIC ---
+# --- 2. LIVE DATA FETCHING ---
 @st.cache_data(ttl=60)
 def fetch_market_data():
     tickers = {
@@ -27,7 +27,7 @@ def fetch_market_data():
     for name, sym in tickers.items():
         try:
             t = yf.Ticker(sym)
-            # Fetch 30 days for correlation matrix, 1 year for history
+            # Fetch 30 days for correlation
             hist = t.history(period="30d")
             
             if not hist.empty:
@@ -35,11 +35,11 @@ def fetch_market_data():
                 open_price = hist["Open"].iloc[-1]
                 change_pct = ((current_price - open_price) / open_price) * 100
                 
-                # Capture history for correlation
+                # Capture history for correlation calculation
                 price_history[name] = hist["Close"]
                 
                 # Fetch Year Ago Price
-                start_date = (datetime.now() - timedelta(days=370)).strftime('%Y-%m-%d')
+                start_date = (datetime.now() - timedelta(days=375)).strftime('%Y-%m-%d')
                 end_date = (datetime.now() - timedelta(days=360)).strftime('%Y-%m-%d')
                 y_hist = t.history(start=start_date, end=end_date)
                 y_price = y_hist["Close"].iloc[-1] if not y_hist.empty else current_price * 0.92
@@ -77,8 +77,10 @@ for name, data in live_data.items():
         delta=f"{data['change']:.2f}%" if data['price'] > 0 else None
     )
 
+st.sidebar.divider()
+st.sidebar.caption(f"Last Refresh: {datetime.now().strftime('%H:%M:%S')}")
+
 st.title("🌐 2026 Global Macro & Signal Dashboard")
-st.caption(f"Last Refresh: {datetime.now().strftime('%H:%M:%S')} | Data: Real-time API")
 
 # Macro Pulse
 c1, c2, c3 = st.columns(3)
@@ -117,15 +119,20 @@ st.dataframe(heatmap_data.style.applymap(color_trajectory, subset=['Trajectory']
 
 st.divider()
 
-# --- 5. CORRELATION & INTELLIGENCE ---
+# --- 5. MARKET INTELLIGENCE TABS ---
 st.header("🔍 Market Intelligence")
 t1, t2, t3, t4 = st.tabs(["📊 Correlation Matrix", "📅 YoY History", "🚀 Tech/Social", "🗳️ Politics"])
 
 with t1:
     st.subheader("Asset Price Correlation (30-Day)")
-    st.write("A score of **1.0** means assets move perfectly together; **-1.0** means they move in opposite directions.")
+    st.write("A score of **1.0** is perfect correlation; **-1.0** is inverse.")
     if not correlations.empty:
-        st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
+        try:
+            # Safe display with fallback if Matplotlib isn't installed yet
+            st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
+        except ImportError:
+            st.warning("⚠️ Install 'matplotlib' to see the color heatmap. Showing raw data below:")
+            st.dataframe(correlations, use_container_width=True)
     else:
         st.warning("Insufficient history for correlation.")
 
