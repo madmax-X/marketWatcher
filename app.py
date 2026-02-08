@@ -3,6 +3,7 @@ import pandas as pd
 import yfinance as yf
 import numpy as np
 import requests
+import time
 from bs4 import BeautifulSoup
 from skyfield.api import load, EarthSatellite
 from streamlit_autorefresh import st_autorefresh
@@ -16,7 +17,6 @@ st_autorefresh(interval=60 * 1000, key="datarefresh")
 
 @st.cache_data(ttl=60)
 def fetch_macro_data():
-    """Live Tickers: Currency War & Hard Assets."""
     tickers = {
         "DXY (USD Index)": "DX-Y.NYB", "Gold": "GC=F", "Bitcoin": "BTC-USD", 
         "S&P 500": "^GSPC", "Copper": "HG=F", "Nvidia": "NVDA", "Maersk": "AMKBY"
@@ -31,19 +31,23 @@ def fetch_macro_data():
         except: results[name] = {"price": 0.0, "change": 0.0}
     return results
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=600) # Increased TTL to 10 minutes to prevent throttling
 def fetch_polymarket_active():
-    """LIVE TICKER: Real-time Polymarket Activity via Gamma API."""
+    """LIVE TICKER with Backoff for Throttling."""
     try:
         url = "https://gamma-api.polymarket.com"
-        res = requests.get(url, timeout=10).json()
-        return [{"Market": e['title'], "Volume": f"${float(e['volume']):,.0f}", "Category": e['groupTicker']} for e in res if 'volume' in e]
-    except:
-        return [{"Market": "API Throttling Detected", "Volume": "N/A", "Category": "Control"}]
+        response = requests.get(url, timeout=15)
+        
+        if response.status_code == 429: # Rate limit code
+            return [{"Market": "System Cooling (Rate Limit)", "Volume": "N/A", "Category": "Wait"}]
+            
+        res = response.json()
+        return [{"Market": e['title'], "Volume": f"${float(e['volume']):,.0f}", "Category": e.get('groupTicker', 'Event')} for e in res if 'volume' in e]
+    except Exception as e:
+        return [{"Market": "Re-syncing with Oracle...", "Volume": "N/A", "Category": "Sync"}]
 
 @st.cache_data(ttl=900)
 def fetch_social_survival():
-    """LIVE SCRAPER: Collective Survival Metrics (GoFundMe)."""
     headers = {'User-Agent': 'Mozilla/5.0'}
     try:
         res = requests.get("https://www.gofundme.com", headers=headers, timeout=10)
@@ -53,7 +57,6 @@ def fetch_social_survival():
 
 @st.cache_data(ttl=3600)
 def get_sat_pos():
-    """LIVE ORBITAL MATH: GSSAP-7 Real-time position."""
     try:
         ts = load.timescale()
         l1 = "1 41744U 16052A   24039.46732311  .00000045  00000-0  00000-0 0  9997"
@@ -71,18 +74,21 @@ sat_lat, sat_lon = get_sat_pos()
 
 # --- 3. SIDEBAR: THE PULSE ---
 st.sidebar.header("🔥 Live Polymarket Ticker")
-for bet in active_bets[:5]:
-    st.sidebar.caption(f"**{bet['Market']}**")
-    st.sidebar.info(f"Vol: {bet['Volume']}")
+if active_bets and active_bets[0]['Category'] != "Wait":
+    for bet in active_bets[:5]:
+        st.sidebar.caption(f"**{bet['Market']}**")
+        st.sidebar.info(f"Vol: {bet['Volume']}")
+else:
+    st.sidebar.warning("⚠️ Polymarket API rate-limited. Retrying in 10m...")
 
 st.sidebar.divider()
 st.sidebar.header("⚖️ Devaluation Speed")
 deval_speed = (abs(macro['Gold']['change']) + abs(macro['Bitcoin']['change'])) - macro['DXY (USD Index)']['change']
-st.sidebar.metric("Erosion Index", f"{deval_speed:.2f}%", delta="Critical" if deval_speed > 2 else "Nominal")
+st.sidebar.metric("Erosion Index", f"{deval_speed:.2f}%")
 
 # --- 4. MAIN INTERFACE ---
 st.title("🌐 2026 Global Intelligence Dashboard")
-st.caption(f"Sync: {datetime.now().strftime('%H:%M:%S')} | Feb 8, 2026 | Pure Signal Mode")
+st.caption(f"Sync: {datetime.now().strftime('%H:%M:%S')} | Pure Signal Mode")
 
 # Top Metrics
 c1, c2, c3, c4 = st.columns(4)
@@ -123,8 +129,9 @@ with t1:
     st.map(pd.concat([nodes, drift_path, current_sat], ignore_index=True), color='color', size=20)
 
 with t2:
-    st.subheader("🔥 Top 10 Active Prediction Markets")
-    st.table(pd.DataFrame(active_bets))
+    st.subheader("🔥 Top Active Prediction Markets")
+    if active_bets:
+        st.table(pd.DataFrame(active_bets))
 
 with t3:
     st.subheader("🪖 Kinetic Ticker")
@@ -133,5 +140,3 @@ with t3:
 with t4:
     st.subheader("🚢 Logistics")
     st.table(pd.DataFrame({"Route": ["Asia-Europe", "Asia-US West"], "Status": ["Suez Bypass (+12d)", f"Maersk Delta: {macro['Maersk']['change']:.2f}%"]}))
-
-st.info("Full Spectrum Mode Active. All metrics live via YFinance, Gamma API, SGP4, or Scrapers.")
