@@ -74,4 +74,3 @@ with st.expander("🆘 Social Crisis (GoFundMe)"):
     st.write("- **Media Relief:** The Washington Post Guild Fund has reached **$500,000+** to support hundreds of laid-off staff.")
 
 st.divider()
-st.info("Deployment Note: Push this code to your GitHub 'marketWatcher' repo and refresh your Streamlit Cloud app.")
