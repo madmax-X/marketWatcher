@@ -99,7 +99,6 @@ with st.expander("🆘 Social Crisis (GoFundMe)"):
     st.write("- **Media Relief:** The Washington Post Guild Fund has reached **$500,000+** to support hundreds of laid-off staff.")
 
 st.divider()
-st.info("Visual Update: Added conditional formatting to the Sentiment Heatmap for real-time risk assessment.")
 
 # 8. NEW: Supply Chain & Infrastructure Signal Table
 st.header("⚙️ Supply Chain & Infrastructure Truth Table")
