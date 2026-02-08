@@ -100,3 +100,13 @@ with st.expander("🆘 Social Crisis (GoFundMe)"):
 
 st.divider()
 st.info("Visual Update: Added conditional formatting to the Sentiment Heatmap for real-time risk assessment.")
+
+# 8. NEW: Supply Chain & Infrastructure Signal Table
+st.header("⚙️ Supply Chain & Infrastructure Truth Table")
+supply_data = {
+    "Domain": ["AI Hardware", "Global Trade", "Energy", "Real Estate"],
+    "Live Signal": ["HBM Memory 'Sold Out' for 2026", "Mexico Overtakes China (Top Partner)", "Data Center Spending: $500B", "Sublease Inventory Down 20%"],
+    "Market Proxy": ["Nvidia / Micron", "Laredo Crossing Volume", "Utilities / Copper", "Cushman & Wakefield"],
+    "Status": ["Critical Bottleneck", "Structural Pivot", "Grid Strain", "Recovery Early-Innings"]
+}
+st.table(pd.DataFrame(supply_data))
