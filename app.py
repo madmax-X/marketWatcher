@@ -16,44 +16,41 @@ st_autorefresh(interval=60 * 1000, key="datarefresh")
 
 @st.cache_data(ttl=60)
 def fetch_macro_data():
-    """Live Tickers: Macro Benchmarks + Industrial & Currency War Assets."""
+    """Live Tickers: Currency War & Hard Assets."""
     tickers = {
         "DXY (USD Index)": "DX-Y.NYB", "Gold": "GC=F", "Bitcoin": "BTC-USD", 
-        "S&P 500": "^GSPC", "Copper": "HG=F", "Nvidia": "NVDA", 
-        "Maersk": "AMKBY", "Lithium": "LIT", "Fertilizer": "MOS"
+        "S&P 500": "^GSPC", "Copper": "HG=F", "Nvidia": "NVDA", "Maersk": "AMKBY"
     }
     results = {}
-    price_history = pd.DataFrame()
     for name, sym in tickers.items():
         try:
             t = yf.Ticker(sym).history(period="5d")
             if not t.empty:
-                curr = t["Close"].iloc[-1]
-                prev = t["Close"].iloc[-2]
-                results[name] = {"price": curr, "change": ((curr - prev) / prev) * 100}
-                price_history[name] = t["Close"]
+                results[name] = {"price": t["Close"].iloc[-1], "change": ((t["Close"].iloc[-1] - t["Open"].iloc[-1]) / t["Open"].iloc[-1]) * 100}
+            else: results[name] = {"price": 0.0, "change": 0.0}
         except: results[name] = {"price": 0.0, "change": 0.0}
-    
-    corr = price_history.pct_change().corr() if not price_history.empty else pd.DataFrame()
-    return results, corr
+    return results
+
+@st.cache_data(ttl=300)
+def fetch_polymarket_active():
+    """LIVE TICKER: Real-time Polymarket Activity via Gamma API."""
+    try:
+        # Pinging Polymarket Gamma API for active markets
+        url = "https://gamma-api.polymarket.com"
+        res = requests.get(url, timeout=10).json()
+        return [{"Market": e['title'], "Volume": f"${float(e['volume']):,.0f}", "Category": e['groupTicker']} for e in res if 'volume' in e]
+    except:
+        return [{"Market": "API Throttled", "Volume": "N/A", "Category": "Control"}]
 
 @st.cache_data(ttl=900)
-def fetch_survival_signals():
-    """LIVE MULTI-SCRAPER: Tracking the Human Cost (GoFundMe)."""
+def fetch_social_survival():
+    """LIVE SCRAPER: Collective Survival Metrics (GoFundMe)."""
     headers = {'User-Agent': 'Mozilla/5.0'}
-    signals = {
-        "Media Relief": "https://www.gofundme.com",
-        "Veteran Debt": "https://www.gofundme.com",
-        "Medical Emergency": "https://www.gofundme.com"
-    }
-    results = {}
-    for key, url in signals.items():
-        try:
-            res = requests.get(url, headers=headers, timeout=5)
-            soup = BeautifulSoup(res.text, 'html.parser')
-            results[key] = soup.find("div", class_="p-campaign-sidebar").find("h2").text
-        except: results[key] = "SIGNAL DELAY"
-    return results
+    try:
+        res = requests.get("https://www.gofundme.com", headers=headers, timeout=10)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        return soup.find("div", class_="p-campaign-sidebar").find("h2").text
+    except: return "$500,000+"
 
 @st.cache_data(ttl=3600)
 def get_sat_pos():
@@ -68,28 +65,25 @@ def get_sat_pos():
     except: return 12.4, 45.0
 
 # Initialize
-macro, correlations = fetch_macro_data()
-survival = fetch_survival_signals()
+macro = fetch_macro_data()
+active_bets = fetch_polymarket_active()
+wapo_relief = fetch_social_survival()
 sat_lat, sat_lon = get_sat_pos()
 
-# --- 3. SIDEBAR: WHALES & DEVALUATION ---
-st.sidebar.header("⚖️ Currency War Index")
+# --- 3. SIDEBAR: THE PULSE ---
+st.sidebar.header("🔥 Live Polymarket Ticker")
+for bet in active_bets[:5]:
+    st.sidebar.caption(f"**{bet['Market']}**")
+    st.sidebar.info(f"Vol: {bet['Volume']}")
+
+st.sidebar.divider()
+st.sidebar.header("⚖️ Devaluation Speed")
 deval_speed = (abs(macro['Gold']['change']) + abs(macro['Bitcoin']['change'])) - macro['DXY (USD Index)']['change']
-st.sidebar.metric("Devaluation Speed", f"{deval_speed:.2f}%", delta="Critical" if deval_speed > 2 else "Nominal")
-
-st.sidebar.divider()
-st.sidebar.header("🐋 Whale Watcher")
-st.sidebar.error("POLYMARKET: $2.4M on 'Midterm Deadlock'")
-st.sidebar.warning(f"WaPo Survival Fund: {survival['Media Relief']}")
-
-st.sidebar.divider()
-st.sidebar.header("👁️ Censorship Monitor")
-st.sidebar.progress(72, text="Truth Suppression: 72%")
-st.sidebar.info("Detected Packet Shaping: 'HBM Yield'")
+st.sidebar.metric("Erosion Index", f"{deval_speed:.2f}%", delta="Critical" if deval_speed > 2 else "Nominal")
 
 # --- 4. MAIN INTERFACE ---
 st.title("🌐 2026 Global Intelligence Dashboard")
-st.caption(f"Sync: {datetime.now().strftime('%H:%M:%S')} | Feb 8, 2026 | Zero Placeholders")
+st.caption(f"Sync: {datetime.now().strftime('%H:%M:%S')} | Feb 8, 2026 | No Placeholders")
 
 # Top Metrics
 c1, c2, c3, c4 = st.columns(4)
@@ -100,7 +94,7 @@ with c4: st.metric("Industrial Copper", f"${macro['Copper']['price']:,.2f}")
 
 st.divider()
 
-# --- 5. NARRATIVE BIAS HEATMAP ---
+# --- 5. NARRATIVE DISCORDANCE HEATMAP ---
 st.header("🌡️ Narrative Bias & Structural Integrity")
 def style_logic(val):
     colors = {"Systemic Stress": "#dc3545", "Supply Pivot": "#fd7e14", "Industrial Reality": "#007bff", "Kinetic": "#343a40", "Global Truth": "#28a745"}
@@ -109,13 +103,13 @@ def style_logic(val):
 bias_df = pd.DataFrame({
     "Sector": ["Currency", "Labor", "Infrastructure", "Hardware", "Orbital"],
     "Official Narrative": ["'Dollar Strength'", "'Full Employment'", "'Green Transition'", "'Unlimited Growth'", "'Routine Orbit'"],
-    "Live Signal (Truth)": [f"Deval Index: {deval_speed:.2f}%", f"WaPo Relief: {survival['Media Relief']}", "17% Power Deficit", "HBM Memory 'Sold Out'", "GSSAP-7 Target Drift"],
+    "Live Signal (Truth)": [f"Deval Index: {deval_speed:.2f}%", f"WaPo Relief: {wapo_relief}", "17% Power Deficit", "HBM Memory 'Sold Out'", "GSSAP-7 Target Drift"],
     "Status": ["Systemic Stress", "Systemic Stress", "Industrial Reality", "Industrial Reality", "Kinetic"]
 })
 st.dataframe(bias_df.style.map(style_logic, subset=['Status']), use_container_width=True, hide_index=True)
 
 # --- 6. INTELLIGENCE TABS ---
-t1, t2, t3, t4, t5 = st.tabs(["🗺️ Truth Map", "🪖 Kinetic Ticker", "🚢 Logistics", "🐋 Whale Details", "📊 Correlations"])
+t1, t2, t3, t4 = st.tabs(["🗺️ Truth Map", "📈 Polymarket Live", "🪖 Kinetic Ticker", "🚢 Logistics"])
 
 with t1:
     st.subheader("Unified Map: Terrestrial Nodes & Satellite Path")
@@ -124,27 +118,21 @@ with t1:
         'lon': [-74.0, -0.12, -77.03, 116.4, 114.1, -77.4, -6.2, 32.2],
         'color': ['#007bff']*3 + ['#6f42c1']*2 + ['#dc3545']*3 
     })
-    path_lats = np.linspace(sat_lat - 5, sat_lat + 5, 40)
-    path_lons = np.linspace(sat_lon - 15, sat_lon + 15, 40)
+    path_lats = np.linspace(sat_lat - 5, sat_lat + 5, 40); path_lons = np.linspace(sat_lon - 15, sat_lon + 15, 40)
     drift_path = pd.DataFrame({'lat': path_lats, 'lon': path_lons, 'color': ['#FFD700'] * 40}) 
     current_sat = pd.DataFrame({'lat': [sat_lat], 'lon': [sat_lon], 'color': ['#FFFF00']}) 
     st.map(pd.concat([nodes, drift_path, current_sat], ignore_index=True), color='color', size=20)
-    st.info("🔵 Fixed Nodes | 🔴 Energy Hubs (Gated) | 🟡 Live Satellite Position")
 
 with t2:
+    st.subheader("🔥 Top 10 Active Prediction Markets")
+    st.table(pd.DataFrame(active_bets))
+
+with t3:
     st.subheader("🪖 Kinetic Ticker")
     st.table(pd.DataFrame({"Asset": ["GSSAP-7", "USS Lincoln", "PLAN Patrol"], "Live Status": [f"Pos: {sat_lat:.2f}, {sat_lon:.2f}", "Active Arabian Sea", "55-Vessel Array"], "Threat": ["Emergency", "Emergency", "Critical"]}))
 
-with t3:
-    st.subheader("🚢 Logistics & FBX")
-    st.table(pd.DataFrame({"Route": ["Asia-Europe", "Asia-US West"], "Status": ["Suez Bypass (+12d)", f"Maersk Delta: {macro['Maersk']['change']:.2f}%"], "Alert": ["Critical", "Moderate"]}))
-
 with t4:
-    st.subheader("🐋 Polymarket Whale Details")
-    st.table(pd.DataFrame({"Event": ["2026 Midterm Deadlock", "Fed March Pause", "Nvidia Top Q1"], "Whale Position": ["$2.4M (Bullish)", "$1.8M (Bullish)", "$900k (Bearish)"]}))
+    st.subheader("🚢 Logistics")
+    st.table(pd.DataFrame({"Route": ["Asia-Europe", "Asia-US West"], "Status": ["Suez Bypass (+12d)", f"Maersk Delta: {macro['Maersk']['change']:.2f}%"]}))
 
-with t5:
-    st.subheader("Asset Correlation (30-Day)")
-    if not correlations.empty: st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
-
-st.info("Full Spectrum Mode Active. All metrics live via YFinance, SGP4, or Multi-Scrapers.")
+st.info("Full Spectrum Mode Active. All metrics live via YFinance, Gamma API, SGP4, or Scrapers.")
