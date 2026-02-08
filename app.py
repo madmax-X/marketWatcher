@@ -12,8 +12,10 @@ st_autorefresh(interval=60 * 1000, key="datarefresh")
 # --- 2. LIVE DATA FETCHING ---
 @st.cache_data(ttl=60)
 def fetch_market_data():
-    # Indicators: Macro Benchmarks + Industrial Proxies (Copper/Nvidia)
-    tickers = {"S&P 500": "^GSPC", "Gold": "GC=F", "Bitcoin": "BTC-USD", "Copper": "HG=F", "Nvidia": "NVDA"}
+    tickers = {
+        "S&P 500": "^GSPC", "Gold": "GC=F", "Bitcoin": "BTC-USD", 
+        "Copper": "HG=F", "Nvidia": "NVDA", "Crude Oil": "CL=F"
+    }
     results = {}
     price_history = pd.DataFrame()
     for name, sym in tickers.items():
@@ -31,23 +33,23 @@ def fetch_market_data():
 
 live_data, correlations = fetch_market_data()
 
-# --- 3. SIDEBAR: INFRASTRUCTURE & CENSORSHIP ---
-st.sidebar.header("👁️ Information Integrity")
-censorship_level = 72 
-st.sidebar.progress(censorship_level, text=f"Truth Suppression: {censorship_level}%")
+# --- 3. SIDEBAR: WHALE WATCHER & CENSORSHIP ---
+st.sidebar.header("🐋 Polymarket Whale Watcher")
+st.sidebar.error("LARGE MOVE: $2.4M Bet on 'Legislative Deadlock' (Midterms)")
+st.sidebar.warning("WHALE ALERT: $1.2M Exit from 'AI Software Growth' positions.")
 
 st.sidebar.divider()
-st.sidebar.header("⚙️ Industrial Bottlenecks")
-st.sidebar.error("HBM4 Yield Status: 55% (Critical Scarcity)")
-st.sidebar.warning("Grid Load: Northern Virginia hub at 94% capacity.")
+st.sidebar.header("⚙️ Industrial Gating")
+st.sidebar.error("HBM4 Yield: 55% (Scarcity)")
+st.sidebar.warning("Grid Load (VA): 94% Capacity")
 
 st.sidebar.divider()
 st.sidebar.header("📡 Live Orbital Drift")
-st.sidebar.error("GSSAP-7 Drift Active: 105W → 12.4E")
+st.sidebar.error("GSSAP-7: 105W → 12.4E (Drift Active)")
 
-# --- 4. MAIN INTERFACE: GLOBAL PULSE ---
+# --- 4. MAIN INTERFACE ---
 st.title("🌐 2026 Global Intelligence Dashboard")
-st.write(f"**Last Sync:** {datetime.now().strftime('%H:%M:%S')} | **Scraper Status:** 🟢 Nominal")
+st.write(f"**Last Refresh:** {datetime.now().strftime('%H:%M:%S')} | **Signal Integrity:** 🟡 High Divergence")
 
 # Macro Metrics Row
 c1, c2, c3, c4 = st.columns(4)
@@ -73,7 +75,7 @@ def style_logic(val):
 
 bias_df = pd.DataFrame({
     "Sector": ["Labor Market", "Energy Grid", "Orbital", "Tech Hardware", "Real Estate"],
-    "Official Narrative": ["'Full Employment'", "'Green Surplus'", "'Routine Orbit'", "'Unlimited AI Growth'", "'Stabilized Housing'"],
+    "Official Narrative": ["'Full Employment'", "'Green Transition'", "'Routine Orbit'", "'Unlimited AI Growth'", "'Stabilized Housing'"],
     "Shadow Reality (Truth)": ["$500k Relief Spike", "17% Power Deficit", "GSSAP-7 Target Drift", "HBM Memory 'Sold Out'", "+6.2% Q1 Price Jump"],
     "Market Status": ["Suppressed Signal", "Industrial Reality", "Kinetic Movement", "Industrial Reality", "Global Truth"]
 })
@@ -82,55 +84,45 @@ st.dataframe(bias_df.style.map(style_logic, subset=['Market Status']), use_conta
 
 # --- 6. INTELLIGENCE TABS ---
 st.divider()
-t1, t2, t3, t4 = st.tabs(["🗺️ Unified Truth Map", "🪖 Kinetic & Industrial Tickers", "🚫 Censorship Monitor", "📊 Correlation Matrix"])
+t1, t2, t3, t4 = st.tabs(["🗺️ Unified Truth Map", "🐋 Prediction Whale Watcher", "🪖 Kinetic & Industrial Tickers", "📊 Correlation"])
 
 with t1:
     st.subheader("🗺️ Terrestrial Nodes & Orbital Drift Paths")
-    
-    # Nodes (Terrestrial) + Satellite Drift
     nodes = pd.DataFrame({
-        'lat': [40.71, 51.50, 1.35, 38.89, 39.90, 22.31, 38.9, 53.3, 1.3], # Added Data Center Hubs
+        'lat': [40.71, 51.50, 1.35, 38.89, 39.90, 22.31, 38.9, 53.3, 1.3],
         'lon': [-74.00, -0.12, 103.81, -77.03, 116.40, 114.16, -77.4, -6.2, 103.8],
         'Node': ['Truth (NY)', 'Truth (LDN)', 'Logistics (SG)', 'Control (DC)', 'Control (BJG)', 'Truth (HK)', 'DC Hub (VA)', 'DC Hub (DUB)', 'DC Hub (SG)']
     })
-
-    # GSSAP-7 Drift Arc
     path_lats = np.linspace(0, 15, 60) 
     path_lons = np.linspace(-105, 12.4, 60)
     drift_path = pd.DataFrame({'lat': path_lats, 'lon': path_lons, 'Node': 'GSSAP-7 Drift'})
-
     st.map(pd.concat([nodes, drift_path], ignore_index=True))
-    st.info("🟣 Nodes: Info Hubs. | 🔴 Squares: Data Center Power Hubs (Gated). | ⚪ Arc: Satellite relocation active.")
+    st.info("🔵 Fixed Nodes | 🟠 Power Hubs | ⚪ Arc: Satellite relocation correlates with naval readiness.")
 
 with t2:
-    st.subheader("🪖 Kinetic & Industrial Signals")
-    colA, colB = st.columns(2)
-    with colA:
-        st.write("### 🪖 Geopolitics")
-        st.table(pd.DataFrame({
-            "Asset": ["GSSAP-7", "USS Lincoln", "NATO Dart"],
-            "Status": ["Drifting", "Active Stance", "Non-US Drill"],
-            "Risk": ["Extreme", "Emergency", "Elevated"]
-        }))
-    with colB:
-        st.write("### ⚙️ Industrial Gating")
-        st.table(pd.DataFrame({
-            "Resource": ["HBM4 Memory", "Grid Capacity", "Copper"],
-            "Status": ["Sold Out 2026", "17% Deficit", "Stock Shortfall"],
-            "Signal": ["Tech Bottleneck", "Build-out Pause", "Grid Strain"]
-        }))
+    st.subheader("🐋 Polymarket Whale Movements")
+    st.write("Tracking large capital bets (> $100k) against the domestic narrative.")
+    whale_data = pd.DataFrame({
+        "Event": ["2026 Midterm Deadlock", "Fed March 'No Change'", "Nvidia Top Q1", "GSSAP Target Lock"],
+        "Whale Position": ["$2.4M (Bullish)", "$1.8M (Bullish)", "$900k (Bearish)", "$1.2M (Bullish)"],
+        "Discordance": ["HIGH", "LOW", "CRITICAL", "HIGH"],
+        "Trend": ["Accumulating", "Stable", "Exiting", "Entering"]
+    })
+    st.table(whale_data)
 
 with t3:
-    st.subheader("🚫 Information Suppression Ticker")
-    censorship_data = pd.DataFrame({
-        "Keyword": ["WaPo Layoffs", "HBM Yield Fail", "Grid Blackout", "Midterm Deadlock"],
-        "Method": ["Semantic De-ranking", "Throttling", "Packet Shaping", "Narrative Smoothing"]
-    })
-    st.table(censorship_data)
+    st.subheader("🪖 Kinetic & Industrial Signals")
+    cA, cB = st.columns(2)
+    with cA:
+        st.write("### 🪖 Kinetic")
+        st.table(pd.DataFrame({"Asset": ["GSSAP-7", "USS Lincoln", "NATO Dart"], "Status": ["Drifting", "Active", "Non-US Drill"], "Risk": ["Extreme", "Emergency", "Elevated"]}))
+    with cB:
+        st.write("### ⚙️ Industrial Gating")
+        st.table(pd.DataFrame({"Resource": ["HBM4 Memory", "Grid Capacity", "Copper"], "Status": ["Sold Out", "17% Deficit", "Shortfall"], "Signal": ["Tech Gate", "Build-out Pause", "Grid Strain"]}))
 
 with t4:
-    st.subheader("Asset Correlation")
+    st.subheader("Asset Correlation Matrix")
     if not correlations.empty:
         st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
 
-st.info("Market Observation: The 2026 'Truth Gap' is widest in Energy. Reality is gated by physical infrastructure.")
+st.info("Market Observation: Whale positions in Polymarket are currently leading 'Domestic Sentiment' by 14 days.")
