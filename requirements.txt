@@ -5,3 +5,4 @@ streamlit-autorefresh
 matplotlib
 numpy
 requests
+skyfield
