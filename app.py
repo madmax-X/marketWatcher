@@ -77,7 +77,7 @@ with t1:
         'Type': ['Node', 'Node', 'Node', 'Control', 'Control', 'Node', 'Kinetic', 'Orbital Drift', 'Orbital Drift']
     })
     st.map(map_data)
-    st.info("🟢 Nodes: Uncensored data. | 🔴 Control: Narrative steering. | ⚫ Orbital Drift: Strategic satellite repositioning.")
+    st.info("🟢 Nodes: Uncensored data. | 🔴 Control: Narrative steering. | 🪖 Orbital Drift: Strategic satellite repositioning.")
 
 with t2:
     st.subheader("🪖 Kinetic Ticker: Ground & Orbit")
