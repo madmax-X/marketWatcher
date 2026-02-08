@@ -4,3 +4,4 @@ yfinance
 streamlit-autorefresh
 matplotlib
 numpy
+requests
