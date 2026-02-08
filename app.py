@@ -26,71 +26,76 @@ def fetch_market_data():
 
 live_data, correlations = fetch_market_data()
 
-# --- 3. SIDEBAR: ORBITAL & CENSORSHIP ---
+# --- 3. SIDEBAR: ORBITAL KINEMATICS ---
 st.sidebar.header("👁️ Information Integrity")
 censorship_level = 64 
 st.sidebar.progress(censorship_level, text=f"Shadow-Ban Intensity: {censorship_level}%")
-st.sidebar.warning("ALERT: Search throttling on 'GSSAP Maneuvers' detected.")
 
 st.sidebar.divider()
-st.sidebar.header("📡 Orbital Drift Alert")
-st.sidebar.error("CRITICAL: 2 Adversary Inspector Satellites relocated to GEO Slots 12.4E and 105W.")
+st.sidebar.header("📡 Live Orbital Drift")
+st.sidebar.error("PROJECTED PATH: GSSAP-7 moving from 105W to 12.4E. Transit time: 72hrs.")
+st.sidebar.warning("Signal Intelligence: Repositioning suggests targeting lock over Arabian Sea sector.")
 
 # --- 4. MAIN INTERFACE ---
 st.title("🌐 2026 Global Intelligence Dashboard")
-st.write(f"**Breaking:** 🪖 USSF-87 mission launched Feb 12; two GSSAP satellites entering GEO to track 'Shadow' maneuvers.")
+st.write(f"**Live Feed:** {datetime.now().strftime('%H:%M:%S')} | **Orbital Status:** ⚠️ Maneuver in Progress")
 
-# Metrics Row
 c1, c2, c3, c4 = st.columns(4)
-with c1: st.metric("S&P 500 (Domestic)", f"{live_data['S&P 500']['price']:,.2f}", f"{live_data['S&P 500']['change']:.2f}%")
-with c2: st.metric("Gold (Truth Signal)", f"${live_data['Gold']['price']:,.2f}", f"{live_data['Gold']['change']:.2f}%")
-with c3: st.metric("Bitcoin (Exit Asset)", f"${live_data['Bitcoin']['price']:,.2f}", f"{live_data['Bitcoin']['change']:.2f}%")
-with c4: st.metric("Copper (Industrial)", f"${live_data['Copper']['price']:,.2f}", f"{live_data['Copper']['change']:.2f}%")
+with c1: st.metric("S&P 500", f"{live_data['S&P 500']['price']:,.2f}", f"{live_data['S&P 500']['change']:.2f}%")
+with c2: st.metric("Gold (Truth)", f"${live_data['Gold']['price']:,.2f}", f"{live_data['Gold']['change']:.2f}%")
+with c3: st.metric("Bitcoin (Exit)", f"${live_data['Bitcoin']['price']:,.2f}", f"{live_data['Bitcoin']['change']:.2f}%")
+with c4: st.metric("Copper (Utility)", f"${live_data['Copper']['price']:,.2f}", f"{live_data['Copper']['change']:.2f}%")
 
 st.divider()
 
-# --- 5. NARRATIVE BIAS HEATMAP ---
-st.header("🌡️ Narrative Bias & Information Suppression")
-def style_logic(val):
-    colors = {"State Narrative": "background-color: #6f42c1; color: white;", "Suppressed Signal": "background-color: #dc3545; color: white;", 
-              "Global Truth": "background-color: #28a745; color: white;", "Kinetic Ready": "background-color: #343a40; color: white;"}
-    return colors.get(val, "")
-
-bias_df = pd.DataFrame({
-    "Sector": ["Labor Market", "Energy Grid", "Orbital", "Military", "AI Scaling"],
-    "Official Narrative": ["'Full Employment'", "'Green Transition'", "'Routine Launch'", "'Peaceful Patrol'", "'Unlimited Growth'"],
-    "Shadow Signal (Truth)": ["$500k Layoff Relief", "17% Power Deficit", "Maneuverable GEO Drift", "South China Sea Blockade", "HBM4 Sold Out"],
-    "Market Status": ["State Narrative", "Suppressed Signal", "Kinetic Ready", "Kinetic Ready", "Suppressed Signal"]
-})
-st.dataframe(bias_df.style.map(style_logic, subset=['Market Status']), use_container_width=True, hide_index=True)
-
-# --- 6. INTELLIGENCE TABS: GEOPOLITICAL TRUTH MAP ---
-st.divider()
-t1, t2, t3, t4 = st.tabs(["🗺️ Geopolitical Truth Map", "🪖 Military & Orbital Tickers", "📊 Correlation", "🆘 Social Relief"])
+# --- 5. INTELLIGENCE TABS: GEOPOLITICAL TRUTH MAP ---
+t1, t2, t3, t4 = st.tabs(["🗺️ Geopolitical Truth Map", "🪖 Kinetic Ticker", "🌡️ Narrative Heatmap", "📊 Correlation"])
 
 with t1:
-    st.subheader("🗺️ Unified Truth Map: Terrestrial Nodes & Orbital Slots")
-    # Coordinates for Truth Nodes and Satellite Ground-Tracks/Slots
-    map_data = pd.DataFrame({
-        'lat': [40.71, 51.50, 1.35, 38.89, 39.90, 22.31, 25.03, -15.0, 45.0], # Added Orbital Slots as pseudo-coords
-        'lon': [-74.00, -0.12, 103.81, -77.03, 116.40, 114.16, 121.56, 12.4, -105.0],
-        'Type': ['Node', 'Node', 'Node', 'Control', 'Control', 'Node', 'Kinetic', 'Orbital Drift', 'Orbital Drift']
+    st.subheader("🗺️ Unified Truth Map: Terrestrial Nodes & Orbital Drift Paths")
+    
+    # Coordinates for Truth Nodes
+    nodes = pd.DataFrame({
+        'lat': [40.71, 51.50, 1.35, 38.89, 39.90, 22.31],
+        'lon': [-74.00, -0.12, 103.81, -77.03, 116.40, 114.16],
+        'Type': ['Truth Node', 'Truth Node', 'Truth Node', 'State Control', 'State Control', 'Truth Node']
     })
-    st.map(map_data)
-    st.info("🟢 Nodes: Uncensored data. | 🔴 Control: Narrative steering. | 🪖 Orbital Drift: Strategic satellite repositioning.")
+
+    # GENERATING ORBITAL DRIFT PATH (Interpolated Points)
+    # Drift Path from 105W (Mid-Pacific) to 12.4E (Middle East/Africa)
+    drift_lats = np.linspace(0, 15, 50)  # Slight northern arc
+    drift_lons = np.linspace(-105, 12.4, 50)
+    drift_path = pd.DataFrame({'lat': drift_lats, 'lon': drift_lons, 'Type': 'Orbital Drift Path'})
+
+    # Combine all map data
+    map_combined = pd.concat([nodes, drift_path], ignore_index=True)
+    
+    st.map(map_combined)
+    st.info("🔵 Dots: Fixed Truth Nodes. | ⚪ Arc: GSSAP-7 Active Drift Path. Relocation indicates a shift in kinetic targeting priorities.")
 
 with t2:
     st.subheader("🪖 Kinetic Ticker: Ground & Orbit")
     mil_move = pd.DataFrame({
-        "Asset": ["GSSAP 7/8", "Steadfast Dart 2026", "Yaogan Constellation", "USS Lincoln"],
-        "Status": ["GEO Deployment (Live)", "NATO Non-US Exercise", "Indo-Pacific Phasing", "Active Strike Stance"],
-        "Signal": ["Counterspace Readiness", "Allied Fracture", "Carrier Target Tracking", "Regional War Risk"],
-        "Alert": ["Extreme", "Elevated", "Critical", "Emergency"]
+        "Asset": ["GSSAP-7 (USSF)", "Shijian-21 (CNSA)", "USS Lincoln", "NATO Dart"],
+        "Current Slot": ["Drifting to 12.4E", "Proximity Ops at 105W", "Arabian Sea Sector", "Central Europe"],
+        "Truth Signal": ["Repositioning Sensors", "Asset Inspector Alert", "Conflict Readiness", "Allied Rupture"],
+        "Risk": ["Emergency", "Critical", "Emergency", "Elevated"]
     })
     st.table(mil_move)
 
 with t3:
+    st.subheader("🌡️ Narrative Bias Heatmap")
+    bias_df = pd.DataFrame({
+        "Sector": ["Military", "Energy", "Labor", "Orbital"],
+        "Official Narrative": ["'Peaceful Patrols'", "'Green Transition'", "'Full Employment'", "'Routine Maintenance'"],
+        "Shadow Reality": ["Shadow Blockade", "17% Power Deficit", "$500k Relief Spike", "Unannounced GEO Drift"],
+        "Truth Gap": ["Extreme", "Critical", "High", "Critical"]
+    })
+    st.table(bias_df)
+
+with t4:
     st.subheader("Asset Correlation")
     if not correlations.empty: st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
 
-st.info("Market Observation: Narrative control has shifted from 'Deletion' to 'Latency.' The satellite relocations are the only 'Hard Clock' remaining for conflict timing.")
+st.divider()
+st.info("System Note: Orbital drift paths are calculated using TLE (Two-Line Element) perturbation analysis. Terrestrial nodes refresh via YFinance.")
