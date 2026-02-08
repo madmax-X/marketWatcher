@@ -1,50 +1,45 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Global Signal Monitor 2026", layout="wide")
-st.title("🌐 Multi-Market Truth Dashboard")
-st.caption("Aggregating Financial, Creative, and Social Tickers — February 2026")
+st.set_page_config(page_title="2026 Global Macro Hub", layout="wide")
+st.title("🌐 2026 Global Macro & Signal Dashboard")
+st.caption("Real-time data aggregation: February 8, 2026")
 
-# 1. SIDEBAR - CROSS-PLATFORM TICKERS
-st.sidebar.header("Live Market Tickers")
-st.sidebar.metric("Polymarket #1 Vol", "47% Odds", "Manifold Meta-Market")
-st.sidebar.metric("BTC High Target", "$75,000", "60% Probability")
-st.sidebar.metric("Sneaker Premium", "+6% Avg", "Nike/Jordan Recovery")
+# 1. MACRO TICKER BAR (Sidebar)
+st.sidebar.header("Global Macro Tickers")
+st.sidebar.metric("S&P 500", "6,932.30", "+1.97% (Feb 6)")
+st.sidebar.metric("Gold (oz)", "$4,979.80", "+7.03% (Weekly)")
+st.sidebar.metric("10Y Treasury", "4.22%", "+0.03 bps")
+st.sidebar.metric("EUR/USD", "1.1819", "-0.25% (Daily)")
 
-# 2. CORE SIGNAL TABLE
-st.header("Unified Signal Overview")
+# 2. UNIFIED PREDICTION TABLE
+st.header("Unified Truth Table: Benchnarks vs. Signals")
 df = pd.DataFrame({
-    "Market": ["Social (Play)", "Labor (Bounty)", "Cultural (Resale)", "Speculative (Real)"],
-    "Platform": ["Manifold", "Replit Bounties", "StockX / GOAT", "Polymarket"],
-    "Current Signal": ["Sam Altman CEO (96%)", "AI Automation Focus", "Nike 'Mind 001' Hype", "Split Midterm Congress"],
-    "Trend": ["Stable", "Rising Cost", "Luxury Rebound", "Nervous"]
+    "Domain": ["Monetary Policy", "Equity Meta", "Social Crisis", "Labor Tech", "Cultural Assets"],
+    "Market/Platform": ["Polymarket", "Manifold", "GoFundMe", "Replit Bounties", "StockX"],
+    "Live Signal": ["85% Odds: No Fed Change", "47% Odds: Poly #1 Vol", "WaPo Relief: $500k+", "$100/mo AI Pro Pivot", "Mizuno: +124% Growth"],
+    "Outlook": ["Stable", "Competitive", "Emergency", "Consolidating", "Explosive"]
 })
 st.table(df)
 
-# 3. EXPANDABLE CATEGORY DRILL-DOWNS
-st.header("🔍 Category Deep Dives")
+# 3. DETAILED MARKET DRILL-DOWNS
+st.header("🔍 Deep Dive by Sector")
 
-with st.expander("🎭 Manifold: Social & Meta-Forecasting"):
-    st.write("### The Social Pulse (Feb 2026)")
-    st.write("- **Meta-Predictions:** Polymarket is the **47% favorite** to lead 2026 volume, followed by Kalshi at **34%**.")
-    st.write("- **Tech Odds:** There is a **96% probability** Sam Altman remains CEO through February.")
-    st.write("- **Crypto Outlook:** Traders see a **75% chance** of Bitcoin dipping below $60k at some point in 2026.")
+with st.expander("📈 Macro Finance (Indices, Yields, FX)"):
+    st.write("- **Nasdaq-100:** Closed at **25,075.77** on Feb 6, showing resilience after tech selling.")
+    st.write("- **Fixed Income:** 10-Year yields are currently at **4.22%**, snapping a 3-week rising streak.")
+    st.write("- **Currency:** EUR/USD is trending near **1.18**, up from 2025 lows due to USD weakness.")
 
-with st.expander("💻 Replit Bounties: Technical Labor Demand"):
-    st.write("### AI & Dev Economy")
-    st.write("- **Pricing Shift:** Replit is sunsetting 'Teams' and transitioning to a **$100/mo Pro Plan** effective Feb 20, 2026.")
-    st.write("- **Labor Trends:** Focus has shifted to **Replit Agents 3.0** for building autonomous apps with integrated Stripe payments.")
-    st.write("- **Task Complexity:** Minor bug fixes now cost less than the previous $0.25 fixed price, while complex builds are bundled.")
+with st.expander("🗳️ Prediction & Social Forecasting (Polymarket/Manifold)"):
+    st.write("- **Fed Forecast:** 85-87% conviction for 'No Change' in March 2026.")
+    st.write("- **Corporate Governance:** 96% odds Sam Altman remains OpenAI CEO through Feb [Manifold Signal].")
 
-with st.expander("👟 StockX / GOAT: Cultural Assets"):
-    st.write("### Secondary Market Valuation")
-    st.write("- **Growth Leader:** *Mizuno* is the fastest-growing brand (up **124%**), signaling a shift toward performance-lifestyle silhouettes.")
-    st.write("- **Hype Cycle:** Early 2026 is dominated by the **Nike Mind 001** and the revival of the **Nike Total 90** line.")
-    st.write("- **Luxury Outlook:** The luxury footwear market is projected to reach **$44.2B** this year as sneakers become 'investment-grade' assets.")
+with st.expander("🆘 Crowdfunding & Altruism (GoFundMe/Kickstarter)"):
+    st.write("- **Media Emergency:** Washington Post Guild Relief Fund at **$500,000+**; a key indicator for sector health.")
+    st.write("- **Gaming Alpha:** *Tiny Epic Invincible* is the dominant Kickstarter mover at **1268%** funded.")
 
-with st.expander("🆘 GoFundMe & Polymarket (Speculative/Altruistic)"):
-    st.write("- **Emergency Funds:** The 'WaPo Layoff Fund' is at **$466k**, reflecting severe media contraction [Previous Data].")
-    st.write("- **Geopolitics:** Polymarket odds for a US strike on Iran by Feb 28 have dropped to **31%**.")
+with st.expander("👟 Cultural & Labor (StockX/Replit)"):
+    st.write("- **Resale Ticker:** Performance-lifestyle brands like **Mizuno** are outpacing legacy sneakers in premium growth.")
+    st.write("- **Developer Demand:** Labor costs for **AI Agents** are shifting toward monthly subscriptions over individual bounties.")
 
-st.divider()
-st.info("To deploy for free: Upload this app.py to GitHub and connect to Streamlit Community Cloud.")
+st.info("Deployment: Connect this file to Streamlit Cloud for a live public-facing URL.")
