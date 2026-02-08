@@ -7,14 +7,19 @@ from datetime import datetime, timedelta
 
 # --- 1. PAGE CONFIG & AUTO-REFRESH ---
 st.set_page_config(page_title="2026 Truth Oracle", layout="wide")
+
+# Refresh every 60 seconds
 st_autorefresh(interval=60 * 1000, key="datarefresh")
 
 # --- 2. LIVE DATA FETCHING ---
 @st.cache_data(ttl=60)
 def fetch_market_data():
     tickers = {
-        "S&P 500": "^GSPC", "Gold": "GC=F", "Bitcoin": "BTC-USD", 
-        "Copper": "HG=F", "Nvidia": "NVDA"
+        "S&P 500": "^GSPC", 
+        "Gold": "GC=F", 
+        "Bitcoin": "BTC-USD", 
+        "Copper": "HG=F", 
+        "Nvidia": "NVDA"
     }
     results = {}
     price_history = pd.DataFrame()
@@ -23,20 +28,25 @@ def fetch_market_data():
             t = yf.Ticker(sym)
             hist = t.history(period="30d")
             if not hist.empty:
-                results[name] = {"price": hist["Close"].iloc[-1], "change": ((hist["Close"].iloc[-1] - hist["Open"].iloc[-1]) / hist["Open"].iloc[-1]) * 100}
+                results[name] = {
+                    "price": hist["Close"].iloc[-1], 
+                    "change": ((hist["Close"].iloc[-1] - hist["Open"].iloc[-1]) / hist["Open"].iloc[-1]) * 100
+                }
                 price_history[name] = hist["Close"]
-        except: results[name] = {"price": 0.0, "change": 0.0}
+        except:
+            results[name] = {"price": 0.0, "change": 0.0}
+            
     corr = price_history.pct_change().corr() if not price_history.empty else pd.DataFrame()
     return results, corr
 
 live_data, correlations = fetch_market_data()
 
-# --- 3. SIDEBAR: CENSORSHIP & DIVERGENCE ---
+# --- 3. SIDEBAR: CENSORSHIP MONITOR ---
 st.sidebar.header("👁️ Information Integrity")
-censorship_level = 64 # Feb 2026 Suppression Index
+censorship_level = 64 
 st.sidebar.select_slider("Information Throttling Level", options=["Low", "Staggered", "Aggressive", "Total"], value="Aggressive")
 st.sidebar.progress(censorship_level, text=f"Shadow-Ban Intensity: {censorship_level}%")
-st.sidebar.warning("ALERT: Keywords 'WaPo Layoffs' and 'Grid Deficit' are under suppression.")
+st.sidebar.warning("ALERT: Keywords 'WaPo Layoffs' and 'Grid Deficit' are under algorithmic suppression.")
 
 # --- 4. MAIN INTERFACE ---
 st.title("🌐 2026 Global Intelligence Dashboard")
@@ -73,44 +83,51 @@ bias_df = pd.DataFrame({
 
 st.dataframe(bias_df.style.map(style_logic, subset=['Market Status']), use_container_width=True, hide_index=True)
 
-# --- 6. INTELLIGENCE TABS ---
+# --- 6. INTELLIGENCE TABS (Restored Map) ---
 st.divider()
 st.header("🔍 Intelligence Monitoring & Propaganda Analysis")
-t1, t2, t3, t4, t5 = st.tabs(["📊 Correlation Matrix", "🚫 Censorship Monitor", "🗺️ Geo-Political Alignment", "🆘 Social Relief", "💡 Tech Signals"])
+t1, t2, t3, t4, t5 = st.tabs(["🗺️ Geopolitical Truth Map", "📊 Correlation Matrix", "🚫 Censorship Monitor", "🆘 Social Relief", "💡 Tech Signals"])
 
 with t1:
-    st.subheader("Global Asset Correlation")
-    if not correlations.empty: 
-        st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
+    st.subheader("🗺️ Global Information Origin: Truth Nodes vs. State Control")
+    st.write("Visualizing the origin of decentralized signals (unfiltered) vs. hubs of narrative steering.")
+    
+    # Mapping Coordinates
+    # lat/lon keys are required for st.map
+    map_df = pd.DataFrame({
+        'lat': [40.71, 51.50, 22.31, 1.35, 38.89, 39.90, 55.75, 35.68, 47.37],
+        'lon': [-74.00, -0.12, 114.16, 103.81, -77.03, 116.40, 37.61, 139.65, 8.54],
+        'name': ['Truth Node (NY)', 'Truth Node (LDN)', 'Trade Hub (HK)', 'Logistics (SG)', 'State Control (DC)', 'State Control (BJG)', 'State Control (MOS)', 'Truth Node (TYO)', 'Finance Haven (ZRH)']
+    })
+    
+    st.map(map_df)
+    st.info("🟢 Truth Nodes: Hubs where market signals (Polymarket/Gold) move freely. | 🔴 State Centers: Hubs where search and media data are algorithmically steered.")
 
 with t2:
+    st.subheader("Global Asset Correlation")
+    if not correlations.empty: 
+        try:
+            st.dataframe(correlations.style.background_gradient(cmap='RdYlGn', axis=None), use_container_width=True)
+        except:
+            st.dataframe(correlations, use_container_width=True)
+
+with t3:
     st.subheader("🚫 Information Throttling Ticker")
-    st.write("Current keywords being suppressed in Tier-1 Domestic Platforms:")
     censorship_data = pd.DataFrame({
         "Keyword/Topic": ["WaPo Layoffs", "HBM Shortage", "Copper Inventory", "Midterm Odds", "CBDC Resistance"],
         "Status": ["Throttled", "Shadow-Banned", "Deprioritized", "Throttled", "Critical Suppression"],
-        "Impact": ["Prevents collapse narrative", "Protects Tech Valuations", "Hides Industrial Inflation", "Ensures 'Stability' Perception", "Forces Currency Adoption"]
+        "Impact": ["Hides media collapse", "Protects tech stock premium", "Masks industrial inflation", "Stabilizes perception", "Forces digital adoption"]
     })
     st.table(censorship_data)
 
-with t3:
-    st.subheader("🗺️ Geo-Political Alignment & Information Origin")
-    st.write("Plotting un-censored data providers (Polymarket Nodes, etc) vs. areas of known state-media control.")
-    
-    # Data points represent active truth nodes (NYC, London, Zurich, Singapore, HK)
-    # vs areas where news is highly controlled
-    map_data = pd.DataFrame({
-        'lat': [40.71, 51.50, 47.36, 1.35, 22.31, 39.9, 34.05],
-        'lon': [-74.00, -0.12, 8.53, 103.81, 114.16, 116.3, -118.24],
-        'Node Status': ['Truth Node (NY)', 'Truth Node (LDN)', 'Finance Haven (ZRH)', 'Logistics Hub (SG)', 'Trade Hub (HK)', 'State Control (BJG)', 'State Control (LA)']
-    })
-    st.map(map_data)
-    st.info("Observation: Truth Nodes correlate highly with financial safe-havens. State control locations correlate with suppressed market data.")
-
-
 with t4:
     st.subheader("Community Survival Signals")
-    st.write("### 📰 Washington Post Relief fund")
-    st.write("- **Status:** $500,000+ Raised. Algorithms are actively down-ranking this link in social feeds.")
+    st.write("### 📰 Washington Post Relief Fund")
+    st.write("- **Status:** $500,000+ Raised. Official channels framing this as 'innovation'; signal shows industry collapse.")
 
-st.info("Market Observation: The widest gap exists where the physical world (Copper/Grid) meets the digital narrative.")
+with t5:
+    st.subheader("Physical Hardware Bottlenecks")
+    st.write("- **HBM Memory:** SK Hynix reporting 0% available capacity for 2026. Hardware gating AI software.")
+    st.write("- **Power Grid:** Thermal limits reached in major data center hubs.")
+
+st.info("Market Observation: Narrative control is highest in the Energy and Labor sectors. The 'Real World' (Copper/Grid) remains decoupled from the 'Digital Narrative'.")
