@@ -1,55 +1,50 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Page Configuration
-st.set_page_config(page_title="Global Truth Dashboard 2026", layout="wide")
-st.title("🌐 Global Market Signal Monitor")
-st.caption("Real-time data aggregation as of February 2026")
+st.set_page_config(page_title="Global Signal Monitor 2026", layout="wide")
+st.title("🌐 Multi-Market Truth Dashboard")
+st.caption("Aggregating Financial, Creative, and Social Tickers — February 2026")
 
-# 2. Sidebar - High Velocity Tickers
-st.sidebar.header("Live Tickers")
-st.sidebar.metric("Polymarket 'POLY' Launch", "Live/Pending", "Trademarked Feb 4")
-st.sidebar.metric("BTC 2026 Bottom", "$65k (72% Prob)", "Bearish Shift")
-st.sidebar.metric("NVIDIA Dominance", "84% Odds", "Feb 28 Target")
+# 1. SIDEBAR - CROSS-PLATFORM TICKERS
+st.sidebar.header("Live Market Tickers")
+st.sidebar.metric("Polymarket #1 Vol", "47% Odds", "Manifold Meta-Market")
+st.sidebar.metric("BTC High Target", "$75,000", "60% Probability")
+st.sidebar.metric("Sneaker Premium", "+6% Avg", "Nike/Jordan Recovery")
 
-# 3. Global Prediction Table
+# 2. CORE SIGNAL TABLE
 st.header("Unified Signal Overview")
-data = {
-    "Sector": ["Politics", "Crypto/Finance", "Tech/Innovation", "Social/Crisis"],
-    "Lead Indicator": ["Polymarket", "Polymarket", "Kickstarter", "GoFundMe"],
-    "Core Signal": ["R-Senate / D-House Split", "Fed Pause in March", "Games & Design Dominance", "Media Industry Layoffs"],
-    "Truth Score": ["45% Confidence", "85% Conviction", "Extremely High", "Urgent"]
-}
-df = pd.DataFrame(data)
+df = pd.DataFrame({
+    "Market": ["Social (Play)", "Labor (Bounty)", "Cultural (Resale)", "Speculative (Real)"],
+    "Platform": ["Manifold", "Replit Bounties", "StockX / GOAT", "Polymarket"],
+    "Current Signal": ["Sam Altman CEO (96%)", "AI Automation Focus", "Nike 'Mind 001' Hype", "Split Midterm Congress"],
+    "Trend": ["Stable", "Rising Cost", "Luxury Rebound", "Nervous"]
+})
 st.table(df)
 
-# 4. Detailed Drill-Down Sections
+# 3. EXPANDABLE CATEGORY DRILL-DOWNS
 st.header("🔍 Category Deep Dives")
 
-with st.expander("🗳️ Politics & Geopolitics (Polymarket)"):
-    st.write("### Mid-Term & Global Outlook")
-    st.write("- **2026 US Midterms:** Markets favor a split government; current odds for Republican Senate/Democratic House are at **45%**.")
-    st.write("- **UK Leadership:** Traders are pricing a high probability that **Keir Starmer** leaves office by late 2026.")
-    st.write("- **International Conflicts:** Odds of a US strike on Iran by June 2026 have stabilized at **50%**.")
+with st.expander("🎭 Manifold: Social & Meta-Forecasting"):
+    st.write("### The Social Pulse (Feb 2026)")
+    st.write("- **Meta-Predictions:** Polymarket is the **47% favorite** to lead 2026 volume, followed by Kalshi at **34%**.")
+    st.write("- **Tech Odds:** There is a **96% probability** Sam Altman remains CEO through February.")
+    st.write("- **Crypto Outlook:** Traders see a **75% chance** of Bitcoin dipping below $60k at some point in 2026.")
 
-with st.expander("💰 Crypto & Finance (Polymarket + ICE)"):
-    st.write("### Macro Trends & Digital Assets")
-    st.write("- **The 'Fed Pause':** Conviction is at **85%** for a 'No Change' decision at the March 18 FOMC meeting.")
-    st.write("- **Bitcoin Risk:** Following a retreat below $75,000, there is a **72% probability** of BTC dipping below $65k later in 2026.")
-    st.write("- **Real Estate Expansion:** Polymarket now tracks daily residential indices (e.g., NYC, Austin); traders see a **62% chance** median home prices exceed **$420k** by end of Q1.")
+with st.expander("💻 Replit Bounties: Technical Labor Demand"):
+    st.write("### AI & Dev Economy")
+    st.write("- **Pricing Shift:** Replit is sunsetting 'Teams' and transitioning to a **$100/mo Pro Plan** effective Feb 20, 2026.")
+    st.write("- **Labor Trends:** Focus has shifted to **Replit Agents 3.0** for building autonomous apps with integrated Stripe payments.")
+    st.write("- **Task Complexity:** Minor bug fixes now cost less than the previous $0.25 fixed price, while complex builds are bundled.")
 
-with st.expander("🚀 Tech & Innovation (Kickstarter)") :
-    st.write("### Crowdfunding Powerhouses")
-    st.write("- **Lead Categories:** Games remain the most funded category (**$2.84B** total historical), followed by Technology (**$1.99B**) and Design (**$1.93B**).")
-    st.write("- **Trending Projects:** *LODGE* (hotel builder) has raised **$89k+**, while *Tiny Epic Invincible* is currently trending at **1268%** of its goal.")
-    st.write("- **Success Rates:** Comics have the highest category success rate at **68.8%**.")
+with st.expander("👟 StockX / GOAT: Cultural Assets"):
+    st.write("### Secondary Market Valuation")
+    st.write("- **Growth Leader:** *Mizuno* is the fastest-growing brand (up **124%**), signaling a shift toward performance-lifestyle silhouettes.")
+    st.write("- **Hype Cycle:** Early 2026 is dominated by the **Nike Mind 001** and the revival of the **Nike Total 90** line.")
+    st.write("- **Luxury Outlook:** The luxury footwear market is projected to reach **$44.2B** this year as sneakers become 'investment-grade' assets.")
 
-with st.expander("🆘 Social & Crisis (GoFundMe)"):
-    st.write("### The Social Safety Net")
-    st.write("- **Media Volatility:** The 'Washington Post 2026 Layoff Fund' has spiked to **$466,976**, signaling major instability in the journalism sector.")
-    st.write("- **Charitable Shifts:** 2026 is projected as a record fundraising year, with nonprofits increasingly using **AI-powered tools** for donor engagement.")
-    st.write("- **Veteran Care:** 'Help Chuck', a veteran housing fund, has reached **$264,508**.")
+with st.expander("🆘 GoFundMe & Polymarket (Speculative/Altruistic)"):
+    st.write("- **Emergency Funds:** The 'WaPo Layoff Fund' is at **$466k**, reflecting severe media contraction [Previous Data].")
+    st.write("- **Geopolitics:** Polymarket odds for a US strike on Iran by Feb 28 have dropped to **31%**.")
 
-# 5. Dashboard Footer
 st.divider()
-st.info("Data refreshed via decentralized oracle protocols and market scrapers.")
+st.info("To deploy for free: Upload this app.py to GitHub and connect to Streamlit Community Cloud.")
