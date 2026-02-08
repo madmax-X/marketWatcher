@@ -14,7 +14,7 @@ st.sidebar.metric("BTC Price Odds", "60% for $75k", "Moderate Bullish")
 st.sidebar.divider()
 st.sidebar.metric("WaPo Relief Fund", "$500,000+", "Trending")
 
-# 3. NEW: Macro Market Pulse
+# 3. Macro Market Pulse
 st.header("📊 Macro Market Pulse")
 col_a, col_b, col_c = st.columns(3)
 
@@ -32,18 +32,43 @@ with col_c:
 
 st.divider()
 
-# 4. NEW: Unified Market Summary Table
-st.header("📝 Unified Market Summary")
-summary_data = {
+# 4. NEW: Sentiment Heatmap (Color-Coded Ticker)
+st.header("🌡️ Market Sentiment Heatmap")
+
+# Helper function for conditional formatting
+def style_sentiment(val):
+    color_map = {
+        "Explosive": "background-color: #28a745; color: white;",  # Green
+        "Steady": "background-color: #17a2b8; color: white;",     # Teal
+        "Stable": "background-color: #6c757d; color: white;",     # Grey
+        "Hype": "background-color: #ffc107; color: black;",      # Yellow
+        "Nervous": "background-color: #fd7e14; color: white;",    # Orange
+        "Emergency": "background-color: #dc3545; color: white;"   # Red
+    }
+    return color_map.get(val, "")
+
+# Define Data for Summary and Heatmap
+summary_df = pd.DataFrame({
     "Category": ["Equities", "Commodities", "Prediction", "Prediction", "Crowdfunding", "Social Needs", "Labor", "Culture"],
     "Platform / Index": ["S&P 500", "Gold (XAU)", "Polymarket", "Polymarket", "Kickstarter", "GoFundMe", "Replit", "StockX"],
     "Indicator": ["Market Close", "Spot Price", "March Fed Decision", "2026 Midterms", "LODGE Game", "Media Layoffs", "AI Subscription", "Mizuno Resale"],
     "Feb 2026 Value": ["6,932.30", "$4,979.80", "85% Odds", "45% Odds", "$89,000+", "$500,000+", "$100/mo", "+124% YoY"],
     "Trajectory": ["Steady", "Explosive", "Stable", "Nervous", "Explosive", "Emergency", "Structural", "Hype"]
-}
-st.table(pd.DataFrame(summary_data))
+})
 
-# 5. ORIGINAL: Unified Truth Table
+# Apply Styling and Display
+st.dataframe(
+    summary_df.style.applymap(style_sentiment, subset=["Trajectory"]),
+    use_container_width=True
+)
+
+st.divider()
+
+# 5. Unified Market Summary Table (Plain Text version)
+st.header("📝 Unified Market Summary")
+st.table(summary_df)
+
+# 6. ORIGINAL: Unified Truth Table
 st.header("⚖️ Unified Truth Table: Benchmarks vs. Signals")
 truth_data = {
     "Domain": ["Monetary Policy", "Entrepreneurship", "Social Crisis", "Labor Tech", "Cultural Assets"],
@@ -53,7 +78,7 @@ truth_data = {
 }
 st.table(pd.DataFrame(truth_data))
 
-# 6. ORIGINAL: Detailed Market Drill-Downs (Deep Dive)
+# 7. ORIGINAL: Detailed Market Drill-Downs (Deep Dive)
 st.header("🔍 Deep Dive by Sector")
 
 with st.expander("🚀 Kickstarter: Creative Entrepreneurship"):
@@ -74,3 +99,4 @@ with st.expander("🆘 Social Crisis (GoFundMe)"):
     st.write("- **Media Relief:** The Washington Post Guild Fund has reached **$500,000+** to support hundreds of laid-off staff.")
 
 st.divider()
+st.info("Visual Update: Added conditional formatting to the Sentiment Heatmap for real-time risk assessment.")
