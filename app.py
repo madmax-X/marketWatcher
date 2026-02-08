@@ -90,7 +90,63 @@ with t1:
     st.subheader("🗺️ Terrestrial Nodes & Orbital Drift Paths")
     nodes = pd.DataFrame({
         'lat': [40.71, 51.50, 1.35, 38.89, 39.90, 22.31, 38.9, 53.3, 1.3],
-        'lon': [-74.00, -0.12, 103.81, -77.03, 116.40, 114.16, -77.4, -6.2, 103.8],
+        'lon': [-74.00, -0.12, 103.81, -77.03,import streamlit as st
+import pandas as pd
+import yfinance as yf
+from streamlit_autorefresh import st_autorefresh
+
+# --- 1. CONFIG & REFRESH ---
+st.set_page_config(page_title="2026 Truth Oracle", layout="wide")
+st_autorefresh(interval=60 * 1000, key="global_refresh")
+
+# --- 2. LIVE DIVERGENCE ORACLE ---
+@st.cache_data(ttl=60)
+def fetch_divergence_data():
+    # Domestic (S&P) vs Emerging Asia (MSCI EM)
+    tickers = {"Domestic (S&P)": "^GSPC", "Emerging Asia": "EEMA"}
+    results = {}
+    for name, sym in tickers.items():
+        try:
+            t = yf.Ticker(sym).history(period="1d")
+            results[name] = t["Close"].iloc[-1]
+        except: results[name] = 0.0
+    return results
+
+div_data = fetch_divergence_data()
+
+# --- 3. DIVERGENCE TRACKER ---
+st.header("📊 Global Divergence Tracker: Narrative vs. Reality")
+c1, c2 = st.columns(2)
+with c1:
+    st.subheader("Western Sentiment (S&P 500)")
+    st.metric("S&P 500", f"{div_data['Domestic (S&P)']:,.2f}", "Partial Shutdown Friction")
+with c2:
+    st.subheader("Foreign Reality (Asia PMI)")
+    st.metric("Asia Index", "51.7 (Taiwan)", "Strong Order Growth")
+
+# --- 4. DATA SOVEREIGNTY MAP ---
+st.header("🗺️ Data Sovereignty & Censorship Map")
+# Plotting hubs where laws dictate "Truth" access
+map_data = pd.DataFrame({
+    'lat': [38.89, 48.85, 22.31, -35.28, 55.75],
+    'lon': [-77.03, 2.35, 114.16, 149.13, 37.61],
+    'Status': ['Local Laws (DC)', 'GDPR Restriction (Paris)', 'Truth Node (HK)', 'Mandatory APP (Canberra)', 'Absolute Control (Moscow)']
+})
+st.map(map_data)
+st.info("🔵 Fixed Nodes | 🔴 Restricted Sovereignty (Data Throttling highly likely).")
+
+# --- 5. NARRATIVE DISCORDANCE TABLE ---
+st.header("⚠️ Narrative Discordance")
+discord_df = pd.DataFrame({
+    "Sector": ["Labor Market", "Energy", "Supply Chain"],
+    "US Official Report": ["'Modest Job Growth'", "'Green Transition'", "'Diversification'"],
+    "Global Truth Signal": ["WaPo Layoffs fund", "OPEC Surplus to Asia", "Vietnam/Malaysia Growth"],
+    "Divergence Score": ["High", "Critical", "Moderate"]
+})
+st.table(discord_df)
+
+st.info("Market Observation: 2026 is the year of 'Sovereign Reality.' The West is regionalizing trade as Asia's factory engine accelerates away.")
+ 116.40, 114.16, -77.4, -6.2, 103.8],
         'Node': ['Truth (NY)', 'Truth (LDN)', 'Logistics (SG)', 'Control (DC)', 'Control (BJG)', 'Truth (HK)', 'DC Hub (VA)', 'DC Hub (DUB)', 'DC Hub (SG)']
     })
     path_lats = np.linspace(0, 15, 60) 
