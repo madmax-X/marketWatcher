@@ -35,12 +35,11 @@ def fetch_macro_data():
 def fetch_polymarket_active():
     """LIVE TICKER: Real-time Polymarket Activity via Gamma API."""
     try:
-        # Pinging Polymarket Gamma API for active markets
         url = "https://gamma-api.polymarket.com"
         res = requests.get(url, timeout=10).json()
         return [{"Market": e['title'], "Volume": f"${float(e['volume']):,.0f}", "Category": e['groupTicker']} for e in res if 'volume' in e]
     except:
-        return [{"Market": "API Throttled", "Volume": "N/A", "Category": "Control"}]
+        return [{"Market": "API Throttling Detected", "Volume": "N/A", "Category": "Control"}]
 
 @st.cache_data(ttl=900)
 def fetch_social_survival():
@@ -83,7 +82,7 @@ st.sidebar.metric("Erosion Index", f"{deval_speed:.2f}%", delta="Critical" if de
 
 # --- 4. MAIN INTERFACE ---
 st.title("🌐 2026 Global Intelligence Dashboard")
-st.caption(f"Sync: {datetime.now().strftime('%H:%M:%S')} | Feb 8, 2026 | No Placeholders")
+st.caption(f"Sync: {datetime.now().strftime('%H:%M:%S')} | Feb 8, 2026 | Pure Signal Mode")
 
 # Top Metrics
 c1, c2, c3, c4 = st.columns(4)
