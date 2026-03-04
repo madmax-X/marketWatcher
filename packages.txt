@@ -1,1 +1,3 @@
 build-essential
+libatlas3-base
+libopenblas-dev
