@@ -1,2 +1,2 @@
 build-essential
-libatlas-base-dev
+libatlas-dev
