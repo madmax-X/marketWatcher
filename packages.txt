@@ -1,2 +1,2 @@
 build-essential
-libatlas-dev
+libblas
